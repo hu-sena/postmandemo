@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "9ef864bc-6588-4f99-8ecc-86b43ae88ad7",
+		"name": "TEST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26214903"
+	},
+	"item": [
+		{
+			"name": "Fetching Book Details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/books?type=fiction",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"books"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "fiction"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetching Single Book Details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Everything in the Tests pane is executed after the response has been returned.\r",
+							"// Tests can additionally be specified at Folder and Collection level.\r",
+							"\r",
+							"// Extract the book data out of the response.\r",
+							"// Note the [0] is required in this example because the endpoint technically returns a list.\r",
+							"var bookData = pm.response.json();\r",
+							"\r",
+							"// Utilising Chai syntax: https://www.chaijs.com/api/\r",
+							"pm.test(\"The correct book is returned\", function () {\r",
+							"    pm.expect(bookData.name).to.eql(\"Just as I Am\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check multiple attributes in a single test\", function () {\r",
+							"    pm.expect(bookData.price).to.eql(20.33);\r",
+							"    //pm.expect(bookData.current-stock).to.be.lessThan(50);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check data types\", function () {\r",
+							"    pm.expect(bookData.author).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Array check (ensure response only contains 1 book)\", function () {\r",
+							"    pm.expect(pm.response.json().length).to.equal(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Confirm book contains all expected keys\", function () {\r",
+							"    pm.expect(bookData).to.have.all.keys(\"id\",\"name\",\"author\",\"type\",\r",
+							"        \"price\",\"current-stock\",\"available\");\r",
+							"});\r",
+							"\r",
+							"// Using ajv library: https://ajv.js.org/guide/getting-started.html\r",
+							"pm.test(\"Book response matches expected JSON schema\", function () {\r",
+							"    var schema = {\r",
+							"        \"properties\": {\r",
+							"            \"id\": { \"type\": \"number\" },\r",
+							"            \"name\": { \"type\": \"string\" },\r",
+							"            \"author\": { \"type\": \"string\" },\r",
+							"            \"type\": { \"type\": \"string\" },\r",
+							"            \"price\": { \"type\": \"number\" },\r",
+							"            \"current-stock\": { \"type\": \"number\" },\r",
+							"            \"available\": { \"type\": \"boolean\" }\r",
+							"        }\r",
+							"    };\r",
+							"    pm.expect(bookData).to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check a value from the response headers\", () => {\r",
+							"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1 second\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"// You can pull data out of a response and use it in variables\r",
+							"// pm.collectionVariables.set(\"imdbUrl\", bookData.imdb);\r",
+							"// pm.collectionVariables.set(\"bookTitle\", bookData.name);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://simple-books-api.glitch.me/books/:bookId",
+					"protocol": "https",
+					"host": [
+						"simple-books-api",
+						"glitch",
+						"me"
+					],
+					"path": [
+						"books",
+						":bookId"
+					],
+					"variable": [
+						{
+							"key": "bookId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
